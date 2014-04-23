@@ -1,0 +1,46 @@
+#!/bin/bash
+
+INSTALLDIR="/usr/local/java-updater"
+
+if [ -L $0 ] ; then
+    SCRIPT=$(readlink $0)
+else
+    SCRIPT=$0
+fi
+SCRIPTDIR=$(dirname $SCRIPT)
+
+function install(){
+
+  if [ -d "$INSTALLDIR" ];then
+      uninstall
+  else
+      mkdir /usr/local/java-updater
+  fi
+  cp "$SCRIPTDIR/java-updater.py" "$INSTALLDIR/"
+  cp "$SCRIPTDIR/setup" "$INSTALLDIR/"
+  cp "$SCRIPTDIR/template-jdk-x86" "$INSTALLDIR/"
+  cp "$SCRIPTDIR/template-jdk-x64" "$INSTALLDIR/"
+  cp "$SCRIPTDIR/template-jre-x86" "$INSTALLDIR/"
+  cp "$SCRIPTDIR/template-jre-x64" "$INSTALLDIR/"
+  chmod u+x "$INSTALLDIR/java-updater.py"
+  ln -sf "$INSTALLDIR/java-updater.py" /usr/bin/java-updater
+}
+
+function uninstall(){
+  rm -v /usr/bin/java-updater
+  rm -rv "$INSTALLDIR"
+}
+
+case "$1" in
+    install)
+	install
+    ;;
+    uninstall)
+	uninstall
+    ;;
+    *)
+      echo -ne "Usage:\n\t./setup {install|uninstall}\n"
+      exit 1
+    ;;
+esac
+exit 0
