@@ -192,7 +192,7 @@ def usage():
     print("-f, --format\t\tFormat: tar.gz, tar, rpm, exe, bin, dmg, sh, tar.Z")
     print("-t, --tool\t\tJava Environment: jdk, jre")
     print("-d, --javadir\t\tJAVA directory in system, default: /usr/java/\n")
-    print("-n, --newest\t\tInstall newest version of Java found on Oracle's pages, default: True\n")
+    print("-n, --newest\t\tInstall newest version of Java found on Oracle's pages, default: False\n")
 
 
 def chooseJavaType():
