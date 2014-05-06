@@ -274,7 +274,7 @@ if __name__ == "__main__":
     iFileFormat = "tar.gz"
     iJavaTool = "jdk"
     iJavaDir = "/usr/java"
-    iInstallNewest = True
+    iInstallNewest = False
     appDir = os.path.dirname(os.path.realpath(__file__))
         
     try:
