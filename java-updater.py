@@ -178,6 +178,9 @@ def extractFile(fileName, destination):
         print e
     return dirName
 
+def is_writable(name):
+    return os.access(name, os.W_OK)
+
 def shellcmd(cmd):
     print cmd
     process = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
@@ -187,12 +190,12 @@ def shellcmd(cmd):
 
 def usage():
     print('\nUsage: java-updater [options]\nAvailable options:')
-    print("-a, --arch\t\tArchitecture: i586, x64, arm-h, arm-s, sparc, sparcv9")
-    print("-s, --system\t\tSystem: linux, solaris, windows, macosx")
-    print("-f, --format\t\tFormat: tar.gz, tar, rpm, exe, bin, dmg, sh, tar.Z")
-    print("-t, --tool\t\tJava Environment: jdk, jre")
-    print("-d, --javadir\t\tJAVA directory in system, default: /usr/java/\n")
-    print("-n, --newest\t\tInstall newest version of Java found on Oracle's pages, default: False\n")
+    print("-a, --arch\t\tArchitecture: i586, x64, arm-h, arm-s, sparc, sparcv9. Default: x64")
+    print("-s, --system\t\tSystem: linux, solaris, windows, macosx. Default: linux")
+    print("-f, --format\t\tFormat: tar.gz, tar, rpm, exe, bin, dmg, sh, tar.Z. Default: tar.gz")
+    print("-t, --tool\t\tJava Environment: jdk, jre. Default: jdk")
+    print("-d, --javadir\t\tJAVA directory in system. Default: /opt/java/\n")
+    print("-n, --newest\t\tInstall newest version of Java found on Oracle's pages. Default: False\n")
 
 
 def chooseJavaType():
@@ -273,7 +276,7 @@ if __name__ == "__main__":
     iSystem = "linux"
     iFileFormat = "tar.gz"
     iJavaTool = "jdk"
-    iJavaDir = "/usr/java"
+    iJavaDir = "/opt/java"
     iInstallNewest = False
     appDir = os.path.dirname(os.path.realpath(__file__))
         
@@ -299,10 +302,10 @@ if __name__ == "__main__":
             usage()
             sys.exit(0)
     
-    if os.getuid() != 0:
-        print "This program should be execute only by root!"
+    if not is_writable(iJavaDir):
+        print "Directory '%s' not exists or is not writable for current user" % iJavaDir
         sys.exit(1)
-    
+
     treeDict = {}
     parser = DownloadLinksParser(dPages)
     parser.parse()
@@ -321,6 +324,7 @@ if __name__ == "__main__":
     system = iSystem
     if (system is None) or (system.strip() == ""):
         system = chooseOS()
+
     
     systemTree = typeTree.get(system)
     if systemTree is None:
@@ -345,6 +349,7 @@ if __name__ == "__main__":
         version = chooseVersion(versions)
     
     versionTree = archTree.get(version)
+    
     if versionTree is None:
         print "Download link for Java: %s not found!" % (version)
         sys.exit(5)
